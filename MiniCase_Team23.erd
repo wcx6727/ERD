@@ -1,0 +1,92 @@
+erdiagram MiniCaseModel
+notation=crowsfoot
+
+entity Customer {
+    customer_id: INTEGER key
+    name: VARCHAR(200)
+    email: VARCHAR(200)
+    customer_type: VARCHAR(50)
+    total_purchase: DECIMAL(12,2)
+}
+
+entity Invoice {
+    invoice_id: INTEGER key
+    invoice_date: DATE
+    customer_id: INTEGER
+    total_amount: DECIMAL(12,2)
+    shipping_address: VARCHAR(500)
+    shipping_fee: DECIMAL(10,2)
+    status: VARCHAR(50)
+    payment_status: VARCHAR(50)
+}
+
+entity InvoiceLine {
+    invoice_line_id: INTEGER key
+    invoice_id: INTEGER
+    product_id: INTEGER
+    quantity: INTEGER
+    unit_price: DECIMAL(10,2)
+}
+
+entity Product {
+    product_id: INTEGER key
+    name: VARCHAR(200)
+    product_type: VARCHAR(100)
+    scale: VARCHAR(50)
+    unit_price: DECIMAL(10,2)
+    quantity_on_hand: INTEGER
+    min_inventory: INTEGER
+    manufacturer_id: INTEGER
+    last_sale_date: DATE
+}
+
+entity Manufacturer {
+    manufacturer_id: INTEGER key
+    name: VARCHAR(200)
+    website: VARCHAR(255)
+}
+
+entity PurchaseOrder {
+    purchase_order_id: INTEGER key
+    order_date: DATE
+    manufacturer_id: INTEGER
+    total_cost: DECIMAL(12,2)
+    order_status: VARCHAR(50)
+}
+
+entity PurchaseOrderLine {
+    po_line_id: INTEGER key
+    purchase_order_id: INTEGER
+    product_id: INTEGER
+    quantity: INTEGER
+    unit_cost: DECIMAL(10,2)
+}
+
+// Relationships (cardinality follows business rules in Mini Case)
+relationship CustomerInvoice {
+    Customer[1 | "customer"] -> Invoice[0..N | "invoice"]
+}
+
+relationship InvoiceInvoiceLine {
+    Invoice[1 | "invoice"] -> InvoiceLine[1..N | "line"]
+}
+
+relationship ProductInvoiceLine {
+    Product[1 | "product"] -> InvoiceLine[0..N | "invoice_line"]
+}
+
+relationship ManufacturerProduct {
+    Manufacturer[1 | "manufacturer"] -> Product[0..N | "product"]
+}
+
+relationship ManufacturerPurchaseOrder {
+    Manufacturer[1 | "manufacturer"] -> PurchaseOrder[0..N | "purchase_order"]
+}
+
+relationship PurchaseOrderPOLine {
+    PurchaseOrder[1 | "purchase_order"] -> PurchaseOrderLine[1..N | "po_line"]
+}
+
+relationship POLineProduct {
+    Product[1 | "product"] -> PurchaseOrderLine[0..N | "po_line"]
+}
